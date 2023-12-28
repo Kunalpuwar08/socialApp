@@ -1,0 +1,1 @@
+export const baseURL = 'https://cloudy-moth-attire.cyclic.app/socialapp/api'

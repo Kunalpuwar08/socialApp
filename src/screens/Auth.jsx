@@ -8,11 +8,14 @@ import {
 import React, {useState} from 'react';
 import Toast from 'react-native-toast-message';
 import {useNavigation} from '@react-navigation/native';
-
-const Api_url = 'http://10.0.2.2:8200/socialapp/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import { updateData } from '../redux/userSlice';
+import { baseURL } from '../constant';
 
 const Auth = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [activeIndex, setActiveIndex] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
@@ -34,7 +37,7 @@ const Auth = () => {
 
   const onLogin = async () => {
     const {email, password} = formData;
-    const response = await fetch(`${Api_url}/auth/login`, {
+    const response = await fetch(`${baseURL}/auth/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -53,8 +56,10 @@ const Auth = () => {
       });
 
       if (data.status == true) {
-        setTimeout(() => {
-          navigation.navigate('Home');
+        setTimeout(async () => {
+          await AsyncStorage.setItem('isUser', JSON.stringify(data.data));
+          dispatch(updateData(data.data));
+          navigation.navigate('Tab');
         }, 2000);
       }
     }
